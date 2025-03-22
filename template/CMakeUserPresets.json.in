@@ -1,0 +1,63 @@
+{
+  "version": 2,
+  "configurePresets": [
+    {
+      "name": "debug",
+      "inherits": "vcpkg",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "ENABLE_SANITIZERS": "ON"
+      },
+      "environment": {
+        "VCPKG_ROOT": "../vcpkg"
+      }
+    },
+    {
+      "name": "release-sanitized",
+      "inherits": "vcpkg",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "ENABLE_SANITIZERS": "ON",
+        "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG"
+      },
+      "environment": {
+        "VCPKG_ROOT": "../vcpkg"
+      }
+    },
+    {
+      "name": "release-linux",
+      "inherits": "vcpkg",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG"
+      },
+      "environment": {
+        "VCPKG_ROOT": "../vcpkg"
+      }
+    },
+    {
+      "name": "release-windows",
+      "inherits": "vcpkg",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_FLAGS_RELEASE": "/O2 /DNDEBUG"
+      },
+      "environment": {
+        "VCPKG_ROOT": "../vcpkg"
+      }
+    },
+    {
+      "name": "release",
+      "inherits": "vcpkg",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "ENABLE_SANITIZERS": "OFF",
+        "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG"
+      },
+      "environment": {
+        "VCPKG_ROOT": "../vcpkg"
+      }
+    }
+  ]
+}
+

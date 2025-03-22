@@ -1,0 +1,87 @@
+# bootstrap.CMakeLists.txt
+
+cmake_minimum_required(VERSION 3.20)
+
+# Пусть пользователь передаёт -DAPP_NAME=... -DAPP_NAMESPACE=...
+# А если не передал, дадим им значение по умолчанию
+if(NOT DEFINED APP_NAME)
+    set(APP_NAME "defaultApp")
+endif()
+
+if(NOT DEFINED APP_NAMESPACE)
+    set(APP_NAMESPACE "defaultNamespace")
+endif()
+
+# Устанавливаем именно в CMake-проект имя из APP_NAME
+project("${APP_NAME}" NONE)
+
+set(TEMPLATE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/template")
+set(OUTPUT_DIR "${CMAKE_BINARY_DIR}/generated")
+
+file(MAKE_DIRECTORY "${OUTPUT_DIR}/include")
+file(MAKE_DIRECTORY "${OUTPUT_DIR}/src")
+file(MAKE_DIRECTORY "${OUTPUT_DIR}/tests")
+
+configure_file(
+    "${TEMPLATE_DIR}/CMakeLists.txt.in"
+    "${OUTPUT_DIR}/CMakeLists.txt"
+    @ONLY
+)
+
+configure_file(
+    "${TEMPLATE_DIR}/include/project.hpp.in"
+    "${OUTPUT_DIR}/include/${APP_NAME}.hpp"
+    @ONLY
+)
+
+configure_file(
+    "${TEMPLATE_DIR}/src/main.cpp.in"
+    "${OUTPUT_DIR}/src/main.cpp"
+    @ONLY
+)
+
+configure_file(
+    "${TEMPLATE_DIR}/tests/CMakeLists.txt.in"
+    "${OUTPUT_DIR}/tests/CMakeLists.txt"
+    @ONLY
+)
+
+configure_file(
+    "${TEMPLATE_DIR}/tests/test_sample.cpp.in"
+    "${OUTPUT_DIR}/tests/test_sample.cpp"
+    @ONLY
+)
+
+configure_file(
+    "${TEMPLATE_DIR}/vcpkg.json.in"
+    "${OUTPUT_DIR}/vcpkg.json"
+    @ONLY
+)
+
+configure_file(
+    "${TEMPLATE_DIR}/CMakePresets.json.in"
+    "${OUTPUT_DIR}/CMakePresets.json"
+    @ONLY
+)
+
+configure_file(
+    "${TEMPLATE_DIR}/CMakeUserPresets.json.in"
+    "${OUTPUT_DIR}/CMakeUserPresets.json"
+    @ONLY
+)
+
+configure_file(
+    "${TEMPLATE_DIR}/.clang-format.in"
+    "${OUTPUT_DIR}/.clang-format"
+    @ONLY
+)
+
+configure_file(
+    "${TEMPLATE_DIR}/.clang-tidy.in"
+    "${OUTPUT_DIR}/.clang-tidy"
+    @ONLY
+)
+
+message(STATUS "Template is generated in ${OUTPUT_DIR}.")
+message(STATUS "Build project: cd ${OUTPUT_DIR}, then: cmake -S . -B build && cmake --build build")
+

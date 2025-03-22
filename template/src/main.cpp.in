@@ -1,0 +1,7 @@
+#include "@APP_NAME@.hpp"
+#include <iostream>
+
+auto main() -> int {
+    std::cout << "Hello from @APP_NAME@ (namespace @APP_NAMESPACE@)!\n";
+    return 0;
+}

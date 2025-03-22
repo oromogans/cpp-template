@@ -1,0 +1,57 @@
+cmake_minimum_required(VERSION 3.20)
+project(@PROJECT_NAME@)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+find_package(GTest CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(Microsoft.GSL CONFIG REQUIRED)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        add_compile_options(-Wall -Wextra -Werror)
+    endif()
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    if(DEFINED MY_OPT_FLAGS)
+        add_compile_options(${MY_OPT_FLAGS})
+    endif()
+endif()
+
+if(ENABLE_SANITIZERS)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
+        add_link_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
+    endif()
+endif()
+
+
+add_executable(@PROJECT_NAME@ src/main.cpp)
+target_include_directories(@PROJECT_NAME@ PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(@PROJECT_NAME@ PRIVATE Microsoft.GSL::GSL)
+
+enable_testing()
+add_subdirectory(tests)
+
+file(GLOB_RECURSE ALL_CXX_SOURCE_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp"
+)
+add_custom_target(format
+    COMMAND clang-format -i ${ALL_CXX_SOURCE_FILES}
+    COMMENT "Clang-format"
+)
+
+add_custom_target(lint
+    COMMAND clang-tidy -p ${CMAKE_BINARY_DIR} ${ALL_CXX_SOURCE_FILES}
+    COMMENT "Clang-tidy"
+)
+set(CMAKE_TOOLCHAIN_FILE
+    "${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake"
+    CACHE FILEPATH "Vcpkg toolchain file"
+)
